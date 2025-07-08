@@ -1,10 +1,12 @@
 import { use, useEffect  } from 'react';
-import {selectAllPosts} from './postSlice';
+import {selectAllPosts,incrementReaction,Reaction} from './postSlice';
 import { useSelector , useDispatch } from 'react-redux';
 import {useForm, Controller} from 'react-hook-form';
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { addPost} from './postSlice'
+
+
 
 export default function Post() {
     const allPosts = useSelector(selectAllPosts);
@@ -21,19 +23,19 @@ export default function Post() {
         <div>
           <h2>Posts</h2>
           {
-            allPosts.map((post) => (
-              <article key={post.id}>
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
-                {/* <div>
-                  <span>👍 {post.reactions.thumbsUp}</span>
-                  <span>😮 {post.reactions.wow}</span>
-                  <span>❤️ {post.reactions.heart}</span>
-                  <span>🚀 {post.reactions.rocket}</span>
-                  <span>☕ {post.reactions.coffee}</span>
-                </div> */}
-              </article>
-            ))
+        allPosts.map((post) => (
+          <article key={post.id}>
+            <h3>{post.title}</h3>
+            <p>{post.content}</p>
+            <div>
+              <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.thumbsUp }))}>👍 {post.reactions.thumbsUp}</span>
+              <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.wow }))}>😮 {post.reactions.wow}</span>
+              <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.heart }))}>❤️ {post.reactions.heart}</span>
+              <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.rocket }))}>🚀 {post.reactions.rocket}</span>
+              <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.coffee }))}>☕ {post.reactions.coffee}</span>
+            </div>
+          </article>
+        ))
           }
         </div>
       );

@@ -30,6 +30,8 @@ const initialState = [
 ];
 
 
+
+
 const postSlice = createSlice({
     name : 'posts',
     initialState,
@@ -47,14 +49,31 @@ const postSlice = createSlice({
                 }
                }   
             }
+        },
+        incrementReaction : (state, action) =>  {
+            const { postId, reaction } = action.payload;
+            const existingPost = state.find(post => post.id === postId);
+            if (existingPost) {
+                existingPost.reactions[reaction]++;
+            }
         }
     }
 });
 
+class Reaction{
+    static thumbsUp = 'thumbsUp';
+    static wow = 'wow';
+    static heart = 'heart';
+    static rocket = 'rocket';
+    static coffee = 'coffee';
+}
+
 
 export const selectAllPosts = (state) => state.posts;
 
-export const { addPost } = postSlice.actions;
+export const { addPost , incrementReaction} = postSlice.actions;
+
+export { Reaction };
 
 
 export default postSlice.reducer;
