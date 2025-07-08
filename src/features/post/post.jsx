@@ -1,16 +1,18 @@
-import { use, useEffect } from 'react';
+import { use, useEffect  } from 'react';
 import {selectAllPosts} from './postSlice';
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch } from 'react-redux';
 import {useForm, Controller} from 'react-hook-form';
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { addPost} from './postSlice'
 
 export default function Post() {
     const allPosts = useSelector(selectAllPosts);
      const { handleSubmit, control, formState: { errors } } = useForm();
+    const dispatch = useDispatch();
 
     const onSubmit = (data)=> {
-       console.log('Form submitted', data);
+        dispatch(addPost(data.title, data.content));
     }
 
     
@@ -23,13 +25,13 @@ export default function Post() {
               <article key={post.id}>
                 <h3>{post.title}</h3>
                 <p>{post.content}</p>
-                <div>
+                {/* <div>
                   <span>👍 {post.reactions.thumbsUp}</span>
                   <span>😮 {post.reactions.wow}</span>
                   <span>❤️ {post.reactions.heart}</span>
                   <span>🚀 {post.reactions.rocket}</span>
                   <span>☕ {post.reactions.coffee}</span>
-                </div>
+                </div> */}
               </article>
             ))
           }
