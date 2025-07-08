@@ -1,5 +1,5 @@
 import { use, useEffect  } from 'react';
-import {selectAllPosts,incrementReaction,Reaction} from './postSlice';
+import {selectAllPosts,incrementReaction,Reaction ,addNewPost , getSubmitStatus, getPostsStatus,getPostsError , fetchPosts} from './postSlice';
 import { useSelector , useDispatch } from 'react-redux';
 import {useForm, Controller} from 'react-hook-form';
 import TextField from "@mui/material/TextField";
@@ -13,8 +13,21 @@ export default function Post() {
      const { handleSubmit, control, formState: { errors } } = useForm();
     const dispatch = useDispatch();
 
+    const postStatus = useSelector(getPostsStatus);
+    const error = useSelector(getPostsError);
+    const submitStatus = useSelector(getSubmitStatus);
+
+    useEffect(() => {
+        if (postStatus === 'idle') {
+            dispatch(fetchPosts())
+        }
+    }, [postStatus, dispatch])
+
+    
+
     const onSubmit = (data)=> {
-        dispatch(addPost(data.title, data.content));
+        // dispatch(addPost(data.title, data.content));
+        dispatch(addNewPost(data));
     }
 
     
@@ -27,18 +40,26 @@ export default function Post() {
           <article key={post.id}>
             <h3>{post.title}</h3>
             <p>{post.content}</p>
-            <div>
-              <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.thumbsUp }))}>👍 {post.reactions.thumbsUp}</span>
+            {/* <div> */}
+              {/* <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.thumbsUp }))}>👍 {post.reactions.thumbsUp}</span>
               <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.wow }))}>😮 {post.reactions.wow}</span>
               <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.heart }))}>❤️ {post.reactions.heart}</span>
               <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.rocket }))}>🚀 {post.reactions.rocket}</span>
               <span onClick={() => dispatch(incrementReaction({ postId: post.id, reaction: Reaction.coffee }))}>☕ {post.reactions.coffee}</span>
-            </div>
+            </div> */}
           </article>
         ))
           }
         </div>
       );
+    }
+
+    if (postStatus === 'loading') {
+        return <p>"Loading..."</p>
+    } 
+
+    if( postStatus === 'failed') {
+      return <p>Error: {error}</p>
     }
 
   return (
@@ -81,7 +102,11 @@ export default function Post() {
             
           />
 
-      <Button type="submit" variant="contained" color="primary">
+        {submitStatus === 'loading' && <p>Submitting...</p>}
+        {submitStatus === 'failed' && <p>Error submitting post</p>}
+        {submitStatus === 'succeeded' && <p>Post submitted successfully!</p>}
+
+      <Button type="submit" variant="contained" color="primary" disabled={submitStatus === 'pending'}>
           Submit
         </Button>
 
